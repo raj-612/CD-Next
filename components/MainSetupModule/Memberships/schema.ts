@@ -12,12 +12,12 @@ export const membershipSchema = z.object({
   setup_fee: z.number().min(0, { message: "Setup fee must be a positive number" }),
   monthly_fee: z.number(),
   yearly_fee: z.number(),
-  membership_agreement: z.string().optional(),
+  membership_agreement: z.string().default(''),
   add_to_wallet: z.boolean().default(false),
   show_on_portal: z.boolean().default(false),
   discounts_or_free_items: z.boolean().default(false),
-  membership_description: z.string().optional(),
-  free_monthly_products: z.string().optional()
+  membership_description: z.string().default(''),
+  free_monthly_products: z.string().default('')
 }).refine(
   (data) => {
     if (data.payment_frequency === 'monthly' || data.payment_frequency === 'both') {
@@ -48,9 +48,7 @@ export const membershipFormSchema = z.object({
 });
 
 // Infer TypeScript types from the schema
-export type MembershipFormValues = {
-  memberships: Membership[];
-};
+export type MembershipFormValues = z.infer<typeof membershipFormSchema>;
 
 // Define props interface for the component
 export interface MembershipsProps {

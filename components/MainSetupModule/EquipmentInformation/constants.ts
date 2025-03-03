@@ -4,7 +4,15 @@ import type { Equipment, Resource } from './schema';
 export const DEFAULT_EQUIPMENT: Equipment = {
   name: "",
   clinic: "",
-  schedule: "",
+  schedule: {
+    monday: { available: false, shifts: [] },
+    tuesday: { available: false, shifts: [] },
+    wednesday: { available: false, shifts: [] },
+    thursday: { available: false, shifts: [] },
+    friday: { available: false, shifts: [] },
+    saturday: { available: false, shifts: [] },
+    sunday: { available: false, shifts: [] }
+  },
   required_services: [],
   cleanup_time: 0
 };
@@ -14,7 +22,15 @@ export const DEFAULT_RESOURCE: Resource = {
   name: "",
   clinic: "",
   type: "",
-  schedule: "",
+  schedule: {
+    monday: { available: false, shifts: [] },
+    tuesday: { available: false, shifts: [] },
+    wednesday: { available: false, shifts: [] },
+    thursday: { available: false, shifts: [] },
+    friday: { available: false, shifts: [] },
+    saturday: { available: false, shifts: [] },
+    sunday: { available: false, shifts: [] }
+  },
   required_services: []
 };
 
@@ -30,3 +46,13 @@ export const inputStyles = {
   focus: "focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500",
   error: "border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500"
 };
+
+export const DAYS_OF_WEEK = [
+  { key: 'monday', label: 'Monday' },
+  { key: 'tuesday', label: 'Tuesday' },
+  { key: 'wednesday', label: 'Wednesday' },
+  { key: 'thursday', label: 'Thursday' },
+  { key: 'friday', label: 'Friday' },
+  { key: 'saturday', label: 'Saturday' },
+  { key: 'sunday', label: 'Sunday' }
+];

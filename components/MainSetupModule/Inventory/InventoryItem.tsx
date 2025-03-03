@@ -71,7 +71,7 @@ export function InventoryItem({
                 <FormField
                   control={control}
                   name={`inventory.${index}.category`}
-                  render={({ field }) => field.value ? <span>{field.value}</span> : null}
+                  render={({ field }) => <>{field.value ? <span>{field.value}</span> : null}</>}
                 />
                 {/* Add a separator if both values exist */}
                 <FormField
@@ -82,7 +82,7 @@ export function InventoryItem({
                       control={control}
                       name={`inventory.${index}.price`}
                       render={({ field: priceField }) => (
-                        (categoryField.value && priceField.value) ? <span>|</span> : null
+                        <>{(categoryField.value && priceField.value) ? <span>|</span> : null}</>
                       )}
                     />
                   )}
@@ -91,7 +91,7 @@ export function InventoryItem({
                   control={control}
                   name={`inventory.${index}.price`}
                   render={({ field }) => (
-                    field.value ? <span>${field.value.toFixed(2)}</span> : null
+                    <>{field.value ? <span>${field.value.toFixed(2)}</span> : null}</>
                   )}
                 />
               </div>

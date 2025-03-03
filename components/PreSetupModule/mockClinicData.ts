@@ -1,11 +1,11 @@
 import type { ClinicSetupSchema } from "@/types/schema";
 
 const DEFAULT_SCHEDULE = {
-  monday: { available: true, shifts: [{ start: "09:00 AM", end: "05:00 PM" }] },
-  tuesday: { available: true, shifts: [{ start: "09:00 AM", end: "05:00 PM" }] },
-  wednesday: { available: true, shifts: [{ start: "09:00 AM", end: "05:00 PM" }] },
-  thursday: { available: true, shifts: [{ start: "09:00 AM", end: "05:00 PM" }] },
-  friday: { available: true, shifts: [{ start: "09:00 AM", end: "05:00 PM" }] },
+  monday: { available: true, shifts: [{ start: "09:00", end: "12:00" }, {start:"13:00", end : "17:00"}] },
+  tuesday: { available: true, shifts: [{ start: "09:00", end: "13:00" }, {start:"14:00",end:"16:00"}] },
+  wednesday: { available: true, shifts: [{ start: "09:00", end: "17:00" }] },
+  thursday: { available: true, shifts: [{ start: "09:00", end: "17:00" }] },
+  friday: { available: true, shifts: [{ start: "09:00", end: "17:00" }] },
   saturday: { available: false, shifts: [] },
   sunday: { available: false, shifts: [] }
 };
@@ -21,12 +21,12 @@ export const mockClinicData: ClinicSetupSchema = {
     country: "United States",
     business_website: "https://serenityaesthetic.com",
     business_hours: {
-      monday: { open: "09:00 AM", close: "06:00 PM" },
-      tuesday: { open: "09:00 AM", close: "06:00 PM" },
-      wednesday: { open: "09:00 AM", close: "06:00 PM" },
-      thursday: { open: "09:00 AM", close: "06:00 PM" },
-      friday: { open: "09:00 AM", close: "06:00 PM" },
-      saturday: { open: "10:00 AM", close: "04:00 PM" },
+      monday: { open: "09:00", close: "17:00" },
+      tuesday: { open: "09:00", close: "17:00" },
+      wednesday: { open: "09:00", close: "17:00" },
+      thursday: { open: "09:00", close: "17:00" },
+      friday: { open: "09:00", close: "17:00" },
+      saturday: { open: "", close: "" },
       sunday: { open: "", close: "" }
     },
     logo_url: "",
@@ -83,7 +83,7 @@ export const mockClinicData: ClinicSetupSchema = {
         photo_url: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3",
         bio: "Dr. Smith is a board-certified dermatologist with over 10 years of experience in aesthetic medicine.",
         schedule: { ...DEFAULT_SCHEDULE },
-        assigned_locations: ["Serenity Beverly Hills", "Serenity Santa Monica"]
+        assigned_locations: ["Serenity Santa Monica"]
       }
     ]
   },
@@ -106,7 +106,15 @@ export const mockClinicData: ClinicSetupSchema = {
     {
       name: "Sylfirm X",
       clinic: "Lovely Lines",
-      schedule: "M-F 8:6",
+      schedule: {
+        monday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
+        tuesday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
+        wednesday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
+        thursday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
+        friday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
+        saturday: { available: false, shifts: [] },
+        sunday: { available: false, shifts: [] }
+      },
       required_services: ["RF Microneedling (all)"],
       cleanup_time: 10
     }
@@ -116,7 +124,15 @@ export const mockClinicData: ClinicSetupSchema = {
       name: "Jane Doe, NP",
       clinic: "Lovely Lines",
       type: "GFE",
-      schedule: "M-F 8 AM- 12 PM and 1 PM- 5 PM",
+      schedule: {
+        monday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
+        tuesday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
+        wednesday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
+        thursday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
+        friday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
+        saturday: { available: false, shifts: [] },
+        sunday: { available: false, shifts: [] }
+      },
       required_services: ["New Patient Consult", "New Patient Filler", "New Patient Tox"]
     }
   ],

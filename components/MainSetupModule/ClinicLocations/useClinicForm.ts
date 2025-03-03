@@ -16,7 +16,6 @@ export function useClinicForm({ initialData, onSubmit }: UseClinicFormProps = {}
   const { dispatch } = useSetup();
   const [expandedClinics, setExpandedClinics] = useState<number[]>([0]);
 
-  // Initialize form with initialData or default values
   const form = useForm<ClinicFormValues>({
     resolver: zodResolver(clinicFormSchema),
     defaultValues: initialData?.length 
@@ -24,7 +23,6 @@ export function useClinicForm({ initialData, onSubmit }: UseClinicFormProps = {}
           locations: initialData.map(location => ({
             ...DEFAULT_LOCATION,
             ...location,
-            // Ensure all required fields are present with their correct types
             name: location.name || "",
             street_address: location.street_address || "",
             street_address_line_2: location.street_address_line_2 || "",
@@ -44,13 +42,11 @@ export function useClinicForm({ initialData, onSubmit }: UseClinicFormProps = {}
       : INITIAL_VALUES,
   });
 
-  // Setup field array for locations
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "locations",
   });
 
-  // Toggle expanded/collapsed state of a location
   const toggleClinic = (index: number) => {
     setExpandedClinics(prev => 
       prev.includes(index) 
@@ -59,12 +55,8 @@ export function useClinicForm({ initialData, onSubmit }: UseClinicFormProps = {}
     );
   };
 
-  // Handle form submission
   const handleSubmit = (data: ClinicFormValues) => {
-    console.log('Clinic Locations Submitted:', data);
-    
     try {
-      // Update context state
       dispatch({
         type: "UPDATE_JSON_SCHEMA",
         payload: {
@@ -75,25 +67,20 @@ export function useClinicForm({ initialData, onSubmit }: UseClinicFormProps = {}
       });
       
       toast.success("Clinic locations saved successfully");
-      
-      // Call the onSubmit callback if provided
       if (onSubmit) {
         onSubmit(data);
       }
     } catch (error) {
       toast.error("Failed to save clinic locations");
-      console.error("Error in handleSubmit:", error);
-    }
+          }
   };
 
-  // Add a new location
   const addLocation = () => {
     const newIndex = fields.length;
     append(DEFAULT_LOCATION);
     toggleClinic(newIndex);
   };
 
-  // Check if a location has errors
   const hasLocationErrors = (index: number) => {
     const errors = form.formState.errors.locations?.[index];
     return errors && Object.keys(errors).length > 0;

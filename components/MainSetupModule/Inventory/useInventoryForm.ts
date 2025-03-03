@@ -30,7 +30,7 @@ export function useInventoryForm({ initialData, onSubmit }: UseInventoryFormProp
   });
 
   // Setup field array for inventory items
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
     name: "inventory",
   });
@@ -44,9 +44,24 @@ export function useInventoryForm({ initialData, onSubmit }: UseInventoryFormProp
     );
   };
 
+  // Set inventory items from Excel
+  const updateInventory = (items: InventoryItem[]) => {
+    const formattedItems = items.map(item => ({
+      ...DEFAULT_INVENTORY_ITEM,
+      ...item,
+    }));
+    
+    form.setValue('inventory', formattedItems, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
+    
+    setExpandedItems([0]);
+  };
+
   // Handle form submission
   const handleSubmit = (data: InventoryFormValues) => {
-    console.log('Inventory Submitted:', data);
     
     try {
       // Update context state
@@ -65,7 +80,6 @@ export function useInventoryForm({ initialData, onSubmit }: UseInventoryFormProp
       }
     } catch (error) {
       toast.error("Failed to save inventory");
-      console.error("Error in handleSubmit:", error);
     }
   };
 
@@ -91,5 +105,6 @@ export function useInventoryForm({ initialData, onSubmit }: UseInventoryFormProp
     handleSubmit: form.handleSubmit(handleSubmit),
     addItem,
     hasItemErrors,
+    updateInventory,
   };
 }

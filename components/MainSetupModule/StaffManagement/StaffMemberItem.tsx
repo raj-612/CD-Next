@@ -16,7 +16,9 @@ import type { Control } from 'react-hook-form';
 import type { StaffFormValues } from './schema';
 import type { StaffRole } from './types';
 import { DAYS_OF_WEEK } from './constants';
-import { StaffSchedule } from './StaffSchedule';
+import TimeScheduleInput from '@/components/common/TimeScheduleInput';
+import MultiSelectDropdown from '@/components/common/MultiSelectDropdown';
+import type { Option } from '@/components/common/MultiSelectDropdown';
 
 interface StaffMemberItemProps {
   index: number;
@@ -27,6 +29,7 @@ interface StaffMemberItemProps {
   removeStaffMember: () => void;
   showRemoveButton: boolean;
   handleRoleChange: (index: number, role: StaffRole) => void;
+  locations: Option[];
 }
 
 export function StaffMemberItem({
@@ -38,6 +41,7 @@ export function StaffMemberItem({
   removeStaffMember,
   showRemoveButton,
   handleRoleChange,
+  locations,
 }: StaffMemberItemProps) {
   return (
     <div 
@@ -215,6 +219,26 @@ export function StaffMemberItem({
               )}
             />
 
+            <FormField
+              control={control}
+              name={`staff.${index}.assigned_locations`}
+              render={() => (
+                <FormItem>
+                  <FormLabel>Assigned Locations</FormLabel>
+                  <FormControl>
+                    <MultiSelectDropdown
+                      name={`staff.${index}.assigned_locations`}
+                      control={control}
+                      options={locations}
+                      label=""
+                      placeholder="Select locations..."
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={control}
@@ -335,11 +359,13 @@ export function StaffMemberItem({
               <div className="space-y-4 mt-6 pt-6 border-t border-gray-200">
                 <h3 className="font-medium text-gray-900">Schedule</h3>
                 {DAYS_OF_WEEK.map((day) => (
-                  <StaffSchedule
-                    key={day}
-                    staffIndex={index}
-                    dayName={day}
-                  />
+                  <div key={day}>
+                    <TimeScheduleInput
+                     name = {`staff.${index}.schedule.${day}`}
+                     control={control}
+                     dayLabel={day}
+                    />
+                  </div>
                 ))}
               </div>
             ) : null}

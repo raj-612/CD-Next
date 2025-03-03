@@ -8,7 +8,7 @@ export const locationSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   postal_code: z.string().min(1, "Postal code is required"),
-  country: z.string().optional().default(""),
+  country: z.string().min(1, "Country is required").default("United States"),
   phone: z.string().min(1, "Phone number is required"),
   notification_sms: z.string().optional().default(""),
   notification_emails: z.string().optional().default(""),

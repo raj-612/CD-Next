@@ -35,7 +35,17 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
             ...equipment,
             name: equipment.name || "",
             clinic: equipment.clinic || "",
-            schedule: equipment.schedule || "",
+            schedule: typeof equipment.schedule === 'string' 
+              ? {
+                  monday: { available: false, shifts: [] },
+                  tuesday: { available: false, shifts: [] },
+                  wednesday: { available: false, shifts: [] },
+                  thursday: { available: false, shifts: [] },
+                  friday: { available: false, shifts: [] },
+                  saturday: { available: false, shifts: [] },
+                  sunday: { available: false, shifts: [] },
+                } 
+              : equipment.schedule || DEFAULT_EQUIPMENT.schedule,
             required_services: equipment.required_services || [],
             cleanup_time: equipment.cleanup_time || 0
           }))
@@ -47,7 +57,17 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
             name: resource.name || "",
             clinic: resource.clinic || "",
             type: resource.type || "",
-            schedule: resource.schedule || "",
+            schedule: typeof resource.schedule === 'string' 
+              ? {
+                  monday: { available: false, shifts: [] },
+                  tuesday: { available: false, shifts: [] },
+                  wednesday: { available: false, shifts: [] },
+                  thursday: { available: false, shifts: [] },
+                  friday: { available: false, shifts: [] },
+                  saturday: { available: false, shifts: [] },
+                  sunday: { available: false, shifts: [] },
+                } 
+              : resource.schedule || DEFAULT_RESOURCE.schedule,
             required_services: resource.required_services || []
           }))
         : INITIAL_VALUES.resources
@@ -77,15 +97,28 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
 
   // Handle form submission
   const handleFormSubmit = async (data: EquipmentFormValues) => {
-    console.log('Equipment & Resources Submitted:', data);
     
     try {
-      // Update context state
+      // Convert schedule objects to strings for compatibility with global schema
+      const processedEquipment = data.equipment.map(item => ({
+        ...item,
+        schedule: typeof item.schedule === 'string' 
+          ? item.schedule 
+          : JSON.stringify(item.schedule)
+      }));
+      
+      const processedResources = data.resources.map(item => ({
+        ...item,
+        schedule: typeof item.schedule === 'string'
+          ? item.schedule
+          : JSON.stringify(item.schedule)
+      }));
+      
       dispatch({
         type: "UPDATE_JSON_SCHEMA",
         payload: {
-          equipment: data.equipment,
-          resources: data.resources
+          equipment: processedEquipment,
+          resources: processedResources
         },
       });
       
@@ -102,7 +135,6 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
       }
     } catch (error) {
       toast.error("Failed to save equipment and resources");
-      console.error("Error in handleSubmit:", error);
     }
   };
 
@@ -130,6 +162,49 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
     return errors && Object.keys(errors).length > 0;
   };
 
+  const updateFormData = (data: EquipmentFormValues) => {
+    // Set entire form value directly
+    form.setValue('equipment', data.equipment.map(item => ({
+      ...DEFAULT_EQUIPMENT,
+      ...item,
+      schedule: typeof item.schedule === 'string' 
+        ? {
+            monday: { available: false, shifts: [] },
+            tuesday: { available: false, shifts: [] },
+            wednesday: { available: false, shifts: [] },
+            thursday: { available: false, shifts: [] },
+            friday: { available: false, shifts: [] },
+            saturday: { available: false, shifts: [] },
+            sunday: { available: false, shifts: [] }
+          } 
+        : item.schedule
+    })), { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true 
+    });
+    
+    form.setValue('resources', data.resources.map(item => ({
+      ...DEFAULT_RESOURCE,
+      ...item,
+      schedule: typeof item.schedule === 'string' 
+        ? {
+            monday: { available: false, shifts: [] },
+            tuesday: { available: false, shifts: [] },
+            wednesday: { available: false, shifts: [] },
+            thursday: { available: false, shifts: [] },
+            friday: { available: false, shifts: [] },
+            saturday: { available: false, shifts: [] },
+            sunday: { available: false, shifts: [] }
+          } 
+        : item.schedule
+    })), { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true 
+    });
+  };
+
   return {
     form,
     equipmentFields,
@@ -143,5 +218,6 @@ export function useEquipmentForm({ initialData, onSubmit, onStepComplete }: UseE
     addResource,
     hasEquipmentErrors,
     hasResourceErrors,
+    updateFormData
   };
 }

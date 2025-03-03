@@ -1,19 +1,18 @@
 import { z } from 'zod';
 import type { Package } from '@/types/schema';
-import type { DiscountType, ApplyTo, CustomerAvailability } from './types';
 
 export const packageSchema = z.object({
   discount_name: z.string().min(1, 'Package name is required'),
   discount_type: z.enum(['percentage', 'fixed', 'package']),
-  discount_percentage: z.number().min(0).max(100).optional().nullable(),
-  discount_amount: z.number().min(0).optional().nullable(),
-  package_price: z.number().min(0).optional().nullable(),
-  member_price: z.number().min(0).optional().nullable(),
+  discount_percentage: z.number().min(0).max(100).optional(),
+  discount_amount: z.number().min(0).optional(),
+  package_price: z.number().min(0).optional(),
+  member_price: z.number().min(0).optional(),
   apply_to: z.enum(['all_products', 'selected_products']),
   included_products: z.array(z.string()),
   customer_availability: z.enum(['all', 'members_only']),
   online_portal_available: z.boolean().default(false),
-  package_description: z.string().optional().default(''),
+  package_description: z.string().optional(),
   locations: z.array(z.string()),
   providers: z.array(z.string()),
   start_date: z.string().min(1, 'Start date is required'),
@@ -21,15 +20,15 @@ export const packageSchema = z.object({
 }).refine((data) => {
   // If discount type is percentage, require discount_percentage
   if (data.discount_type === 'percentage') {
-    return data.discount_percentage !== undefined && data.discount_percentage !== null;
+    return data.discount_percentage !== undefined;
   }
   // If discount type is fixed, require discount_amount
   if (data.discount_type === 'fixed') {
-    return data.discount_amount !== undefined && data.discount_amount !== null;
+    return data.discount_amount !== undefined;
   }
   // If discount type is package, require package_price
   if (data.discount_type === 'package') {
-    return data.package_price !== undefined && data.package_price !== null;
+    return data.package_price !== undefined;
   }
   return true;
 }, {

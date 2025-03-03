@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import type { EquipmentFormValues } from './schema';
+import TimeScheduleInput from '@/components/common/TimeScheduleInput';
+import { DAYS_OF_WEEK } from "./constants";
 
 interface ResourceItemProps {
   index: number;
@@ -149,12 +151,21 @@ export function ResourceItem({
           <FormField
             control={control}
             name={`resources.${index}.schedule`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Schedule <span className="text-red-500">*</span></FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter schedule" {...field} />
-                </FormControl>
+            render={() => (
+              <FormItem className="space-y-2">
+                <FormLabel className="text-base font-semibold">
+                  Schedule <span className="text-red-500">*</span>
+                </FormLabel>
+                <div className="space-y-2">
+                  {DAYS_OF_WEEK.map((day) => (
+                    <TimeScheduleInput
+                      key={day.key}
+                      control={control as any}
+                      name={`resources.${index}.schedule.${day.key}` as any}
+                      dayLabel={day.label}
+                    />
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}

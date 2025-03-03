@@ -29,11 +29,6 @@ export function PreSetup() {
   });
 
   const handleFileUploadComplete = (files: FileInfo[]) => {
-    console.log('Files uploaded to Supabase:', files.map(f => ({
-      name: f.displayName,
-      url: f.url,
-      path: f.fileName
-    })));
     setFileInfos(files);
   };
 

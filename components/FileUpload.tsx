@@ -50,11 +50,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   useEffect(() => {
     if (isFirstMount.current) {
       isFirstMount.current = false;
-      return;
+      if (initialFiles && initialFiles.length > 0) {
+        onUploadComplete(initialFiles);
+      }
     }
-    
-    onUploadComplete(files);
-  }, [files, onUploadComplete]);
+  }, [initialFiles, onUploadComplete]);
 
   const isUploading = uploadingFiles.length > 0;
   
@@ -107,7 +107,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     return null;
   };
 
-  const handleFiles = (newFiles: File[]) => {
+  const handleFiles = async (newFiles: File[]) => {
     if (files.length + newFiles.length > maxFiles) {
       toast.error(`You can upload a maximum of ${maxFiles} files.`);
       return;
@@ -125,16 +125,50 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
     if (validFiles.length === 0) return;
     
-    validFiles.forEach(uploadFile);
+    if (validFiles.length > 1) {
+      const uploadPromises = validFiles.map(file => {
+        return new Promise<FileInfo | null>(async (resolve) => {
+          try {
+            setUploadingFiles(prev => [...prev, file.name]);
+            const { url, path } = await supabaseUpload(file, bucket);
+            
+            const fileInfo: FileInfo = {
+              url,
+              fileName: path,
+              displayName: file.name,
+              size: file.size,
+              type: file.type
+            };
+            
+            toast.success(`File ${file.name} uploaded successfully!`);
+            resolve(fileInfo);
+          } catch (error: any) {
+            toast.error(`Failed to upload ${file.name}: ${error.message || 'Unknown error'}`);
+            console.error('Upload error:', error);
+            resolve(null);
+          } finally {
+            setUploadingFiles(prev => prev.filter(name => name !== file.name));
+          }
+        });
+      });
+      
+      const results = await Promise.all(uploadPromises);
+      const successfulUploads = results.filter(result => result !== null) as FileInfo[];
+      
+      setFiles(prevFiles => {
+        const newFiles = [...prevFiles, ...successfulUploads];
+        onUploadComplete(newFiles);
+        return newFiles;
+      });
+    } else {
+      validFiles.forEach(uploadFile);
+    }
   };
 
   const uploadFile = async (file: File) => {
     try {
       setUploadingFiles(prev => [...prev, file.name]);
       
-      console.log('Uploading file to Supabase:', file.name, 'Size:', file.size, 'Type:', file.type);
-      
-      // Upload to Supabase
       const { url, path } = await supabaseUpload(file, bucket);
       
       const fileInfo: FileInfo = {
@@ -145,7 +179,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         type: file.type
       };
 
-      setFiles(prevFiles => [...prevFiles, fileInfo]);
+      setFiles(prevFiles => {
+        const newFiles = [...prevFiles, fileInfo];
+        setTimeout(() => onUploadComplete(newFiles), 0);
+        return newFiles;
+      });
       
       toast.success(`File ${file.name} uploaded successfully!`);
       
@@ -164,6 +202,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     newFiles.splice(index, 1);
     
     setFiles(newFiles);
+    
+    // Call onUploadComplete with the updated files array
+    onUploadComplete(newFiles);
   };
 
   return (

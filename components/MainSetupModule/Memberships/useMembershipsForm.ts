@@ -59,7 +59,7 @@ export function useMembershipsForm({ initialData, onSubmit, onStepComplete }: Us
 
   // Handle form submission
   const handleFormSubmit = async (data: MembershipFormValues) => {
-    console.log('Memberships Submitted:', data);
+    
     
     try {
       // Update context state
@@ -90,7 +90,7 @@ export function useMembershipsForm({ initialData, onSubmit, onStepComplete }: Us
   // Add a new membership
   const addMembership = () => {
     const newIndex = fields.length;
-    append(DEFAULT_MEMBERSHIP);
+    append({ ...DEFAULT_MEMBERSHIP });
     toggleMembership(newIndex);
   };
 
@@ -98,6 +98,36 @@ export function useMembershipsForm({ initialData, onSubmit, onStepComplete }: Us
   const hasMembershipErrors = (index: number) => {
     const errors = form.formState.errors.memberships?.[index];
     return errors && Object.keys(errors).length > 0;
+  };
+
+  // Add function to update memberships from Excel import
+  const updateMemberships = (memberships: Membership[]) => {
+    // Process memberships to ensure type compatibility
+    const processedMemberships = memberships.map(membership => {
+      const processedMembership = { 
+        ...DEFAULT_MEMBERSHIP,
+        membership_name: membership.membership_name || "",
+        discount_percentage: membership.discount_percentage || 0,
+        payment_frequency: membership.payment_frequency || "monthly",
+        setup_fee: membership.setup_fee || 0,
+        monthly_fee: membership.monthly_fee || 0,
+        yearly_fee: membership.yearly_fee || 0,
+        membership_agreement: membership.membership_agreement || "",
+        add_to_wallet: !!membership.add_to_wallet,
+        show_on_portal: !!membership.show_on_portal,
+        discounts_or_free_items: !!membership.discounts_or_free_items,
+        membership_description: membership.membership_description || "",
+        free_monthly_products: membership.free_monthly_products || ""
+      };
+      
+      return processedMembership;
+    });
+    
+    form.setValue('memberships', processedMemberships, { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
   };
 
   return {
@@ -108,6 +138,7 @@ export function useMembershipsForm({ initialData, onSubmit, onStepComplete }: Us
     toggleMembership,
     handleSubmit: form.handleSubmit(handleFormSubmit),
     addMembership,
-    hasMembershipErrors
+    hasMembershipErrors,
+    updateMemberships
   };
 }

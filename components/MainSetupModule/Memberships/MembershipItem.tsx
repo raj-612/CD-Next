@@ -84,7 +84,7 @@ export function MembershipItem({
                   control={control}
                   name={`memberships.${index}.discount_percentage`}
                   render={({ field }) => (
-                    field.value > 0 ? <span>| {field.value}% discount</span> : null
+                    <>{field.value > 0 ? <span>| {field.value}% discount</span> : null}</>
                   )}
                 />
               </div>

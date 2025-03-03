@@ -21,10 +21,17 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
     resolver: zodResolver(packagesFormSchema),
     defaultValues: initialData?.length 
       ? { 
-          packages: initialData.map(item => ({
-            ...DEFAULT_PACKAGE,
-            ...item,
-          }))
+          packages: initialData.map(item => {
+            // Process each package to ensure type compatibility
+            const processedItem: Record<string, any> = { ...DEFAULT_PACKAGE };
+            
+            // Copy all fields from the item, converting null values to undefined
+            Object.entries(item).forEach(([key, value]) => {
+              processedItem[key] = value === null ? undefined : value;
+            });
+            
+            return processedItem;
+          })
         } 
       : INITIAL_VALUES,
   });
@@ -46,7 +53,7 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
 
   // Handle form submission
   const handleSubmit = (data: PackagesFormValues) => {
-    console.log('Packages Submitted:', data);
+    
     
     try {
       // Update context state
@@ -72,7 +79,7 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
   // Add a new package
   const addPackage = () => {
     const newIndex = fields.length;
-    append(DEFAULT_PACKAGE);
+    append({ ...DEFAULT_PACKAGE });
     togglePackage(newIndex);
   };
 
@@ -80,6 +87,38 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
   const hasPackageErrors = (index: number) => {
     const errors = form.formState.errors.packages?.[index];
     return errors && Object.keys(errors).length > 0;
+  };
+
+  // Add function to update packages from Excel import
+  const updatePackages = (packages: Package[]) => {
+    // Process packages to ensure type compatibility
+    const processedPackages = packages.map(pkg => {
+      const processedPkg: Record<string, any> = {};
+      
+      // Copy all fields from the package, converting null values to undefined
+      Object.entries(pkg).forEach(([key, value]) => {
+        processedPkg[key] = value === null ? undefined : value;
+      });
+      
+      // Ensure array fields are properly initialized
+      if (!Array.isArray(processedPkg.included_products)) {
+        processedPkg.included_products = [];
+      }
+      if (!Array.isArray(processedPkg.locations)) {
+        processedPkg.locations = [];
+      }
+      if (!Array.isArray(processedPkg.providers)) {
+        processedPkg.providers = [];
+      }
+      
+      return processedPkg;
+    });
+    
+    form.setValue('packages', processedPackages, { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
   };
 
   return {
@@ -91,5 +130,6 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
     handleSubmit: form.handleSubmit(handleSubmit),
     addPackage,
     hasPackageErrors,
+    updatePackages,
   };
 }

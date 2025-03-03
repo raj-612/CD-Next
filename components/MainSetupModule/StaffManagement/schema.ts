@@ -19,16 +19,6 @@ const scheduleSchema = z.object({
   friday: dayScheduleSchema,
   saturday: dayScheduleSchema,
   sunday: dayScheduleSchema,
-}).refine((schedule) => {
-  // At least one day must be available with shifts
-  const isProvider = true; // This should be derived from context but we'll default to true
-  if (!isProvider) return true;
-  
-  return Object.values(schedule).some(day => 
-    day.available && day.shifts.length > 0
-  );
-}, {
-  message: 'Provider must have at least one available day with shifts',
 });
 
 const staffMemberSchema = z.object({
@@ -44,7 +34,7 @@ const staffMemberSchema = z.object({
   online_booking_enabled: z.boolean(),
   photo_url: z.string().optional(),
   bio: z.string().optional(),
-  schedule: scheduleSchema,
+  schedule: scheduleSchema.optional(),
   assigned_locations: z.array(z.string()),
 });
 

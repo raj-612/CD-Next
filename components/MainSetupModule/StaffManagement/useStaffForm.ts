@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useSetup } from '@/context/SetupContext';
-import { staffFormSchema, type StaffFormValues } from './schema';
+import { staffFormSchema, type StaffFormValues, type StaffMemberFormValues } from './schema';
 import { DEFAULT_STAFF_MEMBER, INITIAL_VALUES } from './constants';
 import type { StaffRole } from './types'; 
 import type { StaffMember as StaffMemberType } from '@/types/schema';
@@ -17,7 +17,6 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
   const { dispatch } = useSetup();
   const [expandedStaff, setExpandedStaff] = useState<number[]>([0]);
 
-  // Initialize form with initialData or default values
   const form = useForm<StaffFormValues>({
     resolver: zodResolver(staffFormSchema),
     defaultValues: initialData?.length 
@@ -25,7 +24,6 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
           staff: initialData.map(member => ({
             ...DEFAULT_STAFF_MEMBER,
             ...member,
-            // Ensure all required fields are present with their correct types
             first_name: member.first_name || "",
             last_name: member.last_name || "",
             email: member.email || "",
@@ -46,13 +44,11 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
       : INITIAL_VALUES,
   });
 
-  // Setup field array for staff members
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "staff",
   });
 
-  // Toggle expanded/collapsed state of a staff member
   const toggleStaff = (index: number) => {
     setExpandedStaff(prev => 
       prev.includes(index) 
@@ -61,12 +57,8 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
     );
   };
 
-  // Handle form submission
   const handleSubmit = (data: StaffFormValues) => {
-    console.log('Staff Information Submitted:', data);
-    
     try {
-      // Update context state
       dispatch({
         type: "UPDATE_JSON_SCHEMA",
         payload: {
@@ -81,35 +73,37 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
       });
       
       toast.success("Staff information saved successfully");
-      
-      // Call the onSubmit callback if provided
       if (onSubmit) {
         onSubmit(data);
       }
     } catch (error) {
       toast.error("Failed to save staff information");
-      console.error("Error in handleSubmit:", error);
     }
   };
 
-  // Add a new staff member
   const addStaffMember = () => {
     const newIndex = fields.length;
     append(DEFAULT_STAFF_MEMBER);
     toggleStaff(newIndex);
   };
 
-  // Check if a staff member has errors
   const hasStaffErrors = (index: number) => {
     const errors = form.formState.errors.staff?.[index];
     return errors && Object.keys(errors).length > 0;
   };
 
-  // Handle role change
   const handleRoleChange = (index: number, role: StaffRole) => {
     form.setValue(`staff.${index}.role`, role);
     form.setValue(`staff.${index}.is_provider`, role === 'provider');
     form.setValue(`staff.${index}.available_for_booking`, role === 'provider');
+  };
+  
+  const updateStaffMembers = (staffMembers: StaffMemberFormValues[]) => {
+    form.setValue('staff', staffMembers, { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
   };
 
   return {
@@ -122,5 +116,6 @@ export function useStaffForm({ initialData, onSubmit }: UseStaffFormProps = {}) 
     addStaffMember,
     hasStaffErrors,
     handleRoleChange,
+    updateStaffMembers,
   };
 }

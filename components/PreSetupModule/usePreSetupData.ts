@@ -50,7 +50,7 @@ export const usePreSetupData = (onComplete: (result: ClinicSetupSchema) => void)
     try {
       // Simulate document processing
       if (fileInfos.length > 0) {
-        console.log('Processing files:', fileInfos.map(f => f.displayName));
+        
         setCurrentStep("Processing documents");
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -58,7 +58,7 @@ export const usePreSetupData = (onComplete: (result: ClinicSetupSchema) => void)
 
       // Simulate website scraping if URL is provided
       if (url) {
-        console.log('Analyzing website:', url);
+        
         setCurrentStep("Analyzing website");
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -73,7 +73,7 @@ export const usePreSetupData = (onComplete: (result: ClinicSetupSchema) => void)
         throw new Error("Could not process clinic data completely");
       }
 
-      console.log('Using mock clinic data');
+      
       
       // Store URL in localStorage if provided
       if (url) {
@@ -117,7 +117,7 @@ export const usePreSetupData = (onComplete: (result: ClinicSetupSchema) => void)
       }
       
       // Simulate a successful retrieval
-      console.log('Retrieved setup data for email:', emailValue);
+      
       onComplete(mockClinicData);
       setIsEmailModalOpen(false);
       

@@ -24,9 +24,7 @@ export function ClinicLocations({ initialData, onSubmit }: ClinicLocationsProps 
     hasLocationErrors,
   } = useClinicForm({ initialData, onSubmit });
 
-  console.log("initialData", initialData);
-
-  return (
+return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">

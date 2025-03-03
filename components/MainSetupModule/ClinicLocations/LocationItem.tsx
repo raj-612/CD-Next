@@ -201,7 +201,7 @@ export function LocationItem({
               name={`locations.${index}.country`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>Country <span className="text-red-500">*</span></FormLabel>
                   <FormControl>
                     <Input placeholder="Enter country" {...field} />
                   </FormControl>

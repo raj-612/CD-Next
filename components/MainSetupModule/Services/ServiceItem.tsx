@@ -383,7 +383,7 @@ export function ServiceItem({
                         services
                           .filter(s => s !== control._formValues.services[index].service_name && s.trim() !== '')
                           .map(service => (
-                            <label key={service} className="flex items-center">
+                            <label key={`${service}_${Math.random().toString(36).substr(2, 9)}`} className="flex items-center">
                               <input
                                 type="checkbox"
                                 className="mr-2"
