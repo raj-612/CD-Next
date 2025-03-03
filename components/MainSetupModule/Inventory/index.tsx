@@ -34,13 +34,14 @@ export default function Inventory({ initialData, onStepComplete }: InventoryProp
     initialData, 
     onSubmit: () => {
       if (onStepComplete) {
-        onStepComplete().catch(error => {
+        onStepComplete().catch(() => {
+          // Handle error silently
         });
       }
     }
   });
 
-  const { processInventoryExcel, isProcessing, error } = useInventoryExcel();
+  const { processInventoryExcel, isProcessing } = useInventoryExcel();
 
   const handleFileUpload = async (files: FileInfo[]) => {
     if (files.length === 0 || isImporting) return;

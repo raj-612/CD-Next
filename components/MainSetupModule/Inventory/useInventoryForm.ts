@@ -30,7 +30,7 @@ export function useInventoryForm({ initialData, onSubmit }: UseInventoryFormProp
   });
 
   // Setup field array for inventory items
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "inventory",
   });

@@ -106,15 +106,7 @@ export const mockClinicData: ClinicSetupSchema = {
     {
       name: "Sylfirm X",
       clinic: "Lovely Lines",
-      schedule: {
-        monday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
-        tuesday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
-        wednesday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
-        thursday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
-        friday: { available: true, shifts: [{ start: "08:00", end: "18:00" }] },
-        saturday: { available: false, shifts: [] },
-        sunday: { available: false, shifts: [] }
-      },
+      schedule: "standard", // String for deployment compatibility
       required_services: ["RF Microneedling (all)"],
       cleanup_time: 10
     }
@@ -124,15 +116,7 @@ export const mockClinicData: ClinicSetupSchema = {
       name: "Jane Doe, NP",
       clinic: "Lovely Lines",
       type: "GFE",
-      schedule: {
-        monday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
-        tuesday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
-        wednesday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
-        thursday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
-        friday: { available: true, shifts: [{ start: "08:00", end: "12:00" }, { start: "13:00", end: "17:00" }] },
-        saturday: { available: false, shifts: [] },
-        sunday: { available: false, shifts: [] }
-      },
+      schedule: "standard", // String for deployment compatibility
       required_services: ["New Patient Consult", "New Patient Filler", "New Patient Tox"]
     }
   ],

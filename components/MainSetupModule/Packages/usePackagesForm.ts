@@ -93,25 +93,26 @@ export function usePackagesForm({ initialData, onSubmit }: UsePackagesFormProps 
   const updatePackages = (packages: Package[]) => {
     // Process packages to ensure type compatibility
     const processedPackages = packages.map(pkg => {
-      const processedPkg: Record<string, any> = {};
-      
-      // Copy all fields from the package, converting null values to undefined
-      Object.entries(pkg).forEach(([key, value]) => {
-        processedPkg[key] = value === null ? undefined : value;
-      });
-      
-      // Ensure array fields are properly initialized
-      if (!Array.isArray(processedPkg.included_products)) {
-        processedPkg.included_products = [];
-      }
-      if (!Array.isArray(processedPkg.locations)) {
-        processedPkg.locations = [];
-      }
-      if (!Array.isArray(processedPkg.providers)) {
-        processedPkg.providers = [];
-      }
-      
-      return processedPkg;
+      // Start with default package to ensure all required fields are present
+      return {
+        ...DEFAULT_PACKAGE,
+        // Override with values from the imported package, handling nulls
+        discount_name: pkg.discount_name || "",
+        discount_type: pkg.discount_type || "percentage",
+        discount_percentage: pkg.discount_percentage,
+        discount_amount: pkg.discount_amount,
+        package_price: pkg.package_price,
+        member_price: pkg.member_price,
+        apply_to: pkg.apply_to || "all_products",
+        included_products: Array.isArray(pkg.included_products) ? pkg.included_products : [],
+        customer_availability: pkg.customer_availability || "all",
+        online_portal_available: !!pkg.online_portal_available,
+        package_description: pkg.package_description || "",
+        locations: Array.isArray(pkg.locations) ? pkg.locations : [],
+        providers: Array.isArray(pkg.providers) ? pkg.providers : [],
+        start_date: pkg.start_date || DEFAULT_PACKAGE.start_date,
+        end_date: pkg.end_date || DEFAULT_PACKAGE.end_date
+      };
     });
     
     form.setValue('packages', processedPackages, { 

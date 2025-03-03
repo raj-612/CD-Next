@@ -52,8 +52,11 @@ export default function Memberships({ initialData, onSubmit, onStepComplete }: M
       
       updateMemberships(processedMemberships);
       toast.success('Memberships imported successfully');
-    } catch (error: any) {
-      toast.error(`Import failed: ${error.message || 'Unknown error'}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Unknown error';
+      toast.error(`Import failed: ${errorMessage}`);
     } finally {
       setIsImporting(false);
     }
